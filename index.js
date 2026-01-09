@@ -1,4 +1,4 @@
-import { saveSettingsDebounced, extension_settings, getContext, renderExtensionTemplateAsync } from "../../../extensions.js";
+import { saveSettingsDebounced, extension_settings, getContext } from "../../../extensions.js";
 import { SlashCommand } from "../../../slash-commands/SlashCommand.js";
 import { SlashCommandParser } from "../../../slash-commands/SlashCommandParser.js";
 import { eventSource, event_types } from "../../../script.js";
@@ -18,10 +18,67 @@ const defaultSettings = {
 let settings = extension_settings[extensionName] || {};
 Object.assign(settings, defaultSettings);
 
-async function loadSettings() {
-    const html = await renderExtensionTemplateAsync(extensionName, 'settings');
-    $('#extensions_settings').append(html);
+const settingsHtml = `
+<div class="nai-settings">
+    <div class="inline-drawer">
+        <div class="inline-drawer-toggle inline-drawer-header">
+            <b>NAI 图片助手设置</b>
+            <div class="inline-drawer-icon fa-solid fa-circle-chevron-down down"></div>
+        </div>
+        <div class="inline-drawer-content">
+            <div class="flex-container">
+                <label class="checkbox_label">
+                    <input type="checkbox" id="nai_enabled" />
+                    启用插件
+                </label>
+            </div>
+            <div class="flex-container">
+                <label class="checkbox_label">
+                    <input type="checkbox" id="nai_auto_mode" />
+                    自动模式 (收到回复后自动绘图)
+                </label>
+            </div>
+            <hr>
+            <div class="flex-container">
+                <label>API 地址 (Base URL)</label>
+                <input type="text" id="nai_api_url" class="text_pole" placeholder="http://127.0.0.1:8080" />
+            </div>
+            <div class="flex-container">
+                <label>模型 (Model)</label>
+                <input type="text" id="nai_model" class="text_pole" placeholder="nai-diffusion-3" />
+            </div>
+            <div class="flex-container">
+                <label>尺寸 (Size)</label>
+                <select id="nai_size" class="text_pole">
+                    <option value="832:1216">竖屏 (832x1216)</option>
+                    <option value="1216:832">横屏 (1216x832)</option>
+                    <option value="1024:1024">方形 (1024x1024)</option>
+                </select>
+            </div>
+            <div class="flex-container">
+                <label>采样器 (Sampler)</label>
+                <select id="nai_sampler" class="text_pole">
+                    <option value="Euler Ancestral">Euler Ancestral</option>
+                    <option value="Euler">Euler</option>
+                    <option value="DPM++ 2S Ancestral">DPM++ 2S Ancestral</option>
+                    <option value="DPM++ 2M">DPM++ 2M</option>
+                </select>
+            </div>
+            <div class="flex-container">
+                <label>正向提示词前缀 (Prefix)</label>
+                <textarea id="nai_prefix" class="text_pole" rows="2"></textarea>
+            </div>
+            <div class="flex-container">
+                <label>反向提示词 (Negative)</label>
+                <textarea id="nai_negative" class="text_pole" rows="3"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+`;
 
+function loadSettings() {
+    $('#extensions_settings').append(settingsHtml);
     $('#nai_enabled').prop('checked', settings.enabled).on('change', function() {
         settings.enabled = $(this).prop('checked');
         saveSettings();
@@ -138,8 +195,8 @@ function onMessageReceived(id) {
     }
 }
 
-jQuery(async () => {
-    await loadSettings();
+jQuery(() => {
+    loadSettings();
     
     SlashCommandParser.addCommandObject(SlashCommand.fromProps({
         name: 'img',
