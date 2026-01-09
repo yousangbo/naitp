@@ -1,0 +1,8 @@
+{
+    "display_name": "NAI图片助手",
+    "author": "忆安",
+    "version": "1.0.0",
+    "loading_order": 1,
+    "requires": [],
+    "js": "index.js"
+}
