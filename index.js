@@ -1,9 +1,9 @@
-import { saveSettingsDebounced, extension_settings, getContext } from "../../../extensions.js";
-import { SlashCommand } from "../../../slash-commands/SlashCommand.js";
-import { SlashCommandParser } from "../../../slash-commands/SlashCommandParser.js";
-import { eventSource, event_types } from "../../../script.js";
+import { saveSettingsDebounced, extension_settings, getContext } from "../../extensions.js";
+import { SlashCommand } from "../../slash-commands/SlashCommand.js";
+import { SlashCommandParser } from "../../slash-commands/SlashCommandParser.js";
+import { eventSource, event_types } from "../../script.js";
 
-const extensionName = import.meta.url.split('/').slice(0, -1).pop();
+const extensionName = decodeURIComponent(import.meta.url.split('/').slice(0, -1).pop());
 const defaultSettings = {
     enabled: true,
     autoMode: false,
